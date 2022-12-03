@@ -10,14 +10,10 @@ object Main {
         })
         println(s"Score computed with first method: $score1")
 
-        val score2 = computeScore({ case Array(a, b) =>
-            if (b == 0) {
-                floorMod(a - 1, 3) + 1
-            } else if (b == 1) {
-                a + 1 + 3
-            } else {
-                floorMod(a + 1, 3) + 1 + 6
-            }
+        val score2 = computeScore({
+            case Array(a, 0) => floorMod(a - 1, 3) + 1
+            case Array(a, 1) => a + 1 + 3
+            case Array(a, 2) => floorMod(a + 1, 3) + 1 + 6
         })
         println(s"Score computed with second method: $score2")
     }
