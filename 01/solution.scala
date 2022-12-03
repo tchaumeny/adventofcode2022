@@ -2,7 +2,7 @@ import scala.io.Source
 
 
 object Main {
-    def main(args: Array[String]): Unit = {
+    def main(args: Array[String]) = {
         val calories = Source
                         .fromFile("dataset.txt")
                         .mkString

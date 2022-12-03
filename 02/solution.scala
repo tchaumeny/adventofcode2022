@@ -4,7 +4,7 @@ import scala.io.Source
 
 object Main {
     val aliases = List("ABC", "XYZ")
-    def main(args: Array[String]): Unit = {
+    def main(args: Array[String]) = {
         val score1 = computeScore({ case Array(a, b) =>
             (if (floorMod(b - a, 3) == 1) 6 else if (a == b) 3 else 0) + b + 1
         })
