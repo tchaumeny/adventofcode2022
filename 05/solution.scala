@@ -11,6 +11,12 @@ class StacksArrangement(stacks: Array[List[String]]):
         )
         StacksArrangement(buffer.toArray)
     }
+    def rearrange2(rearrangement: Rearrangement): StacksArrangement = {
+        val buffer = stacks.toBuffer
+        buffer(rearrangement.to) = buffer(rearrangement.from).take(rearrangement.quantity) ++ buffer(rearrangement.to)
+        buffer(rearrangement.from) = buffer(rearrangement.from).drop(rearrangement.quantity)
+        StacksArrangement(buffer.toArray)
+    }
 end StacksArrangement
 
 
@@ -20,6 +26,7 @@ case class Rearrangement(quantity: Int, from: Int, to: Int)
 object Main {
     def main(args: Array[String]) = {
         println(s"The message on top of the stacks is $problem1")
+        println(s"With CrateMover 9001, the message is $problem2")
     }
     def problem1 = {
         val Array(rawStacks, rawRearrangements) = 
@@ -29,6 +36,16 @@ object Main {
             .split("\n\n")
         initRearrangements(rawRearrangements)
             .foldLeft(initStacks(rawStacks))(_ rearrange _)
+            .message
+    }
+    def problem2 = {
+        val Array(rawStacks, rawRearrangements) =
+        Source
+            .fromFile("input")
+            .mkString
+            .split("\n\n")
+        initRearrangements(rawRearrangements)
+            .foldLeft(initStacks(rawStacks))(_ rearrange2 _)
             .message
     }
     def initStacks(rawStacks: String): StacksArrangement = {
