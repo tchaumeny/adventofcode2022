@@ -7,37 +7,40 @@ case class Coords(x: Int, y: Int) {
     def distance(other: Coords) = (x - other.x).abs.max((y - other.y).abs)
 }
 
-case class State(head: Coords, tail: Coords) {
-    def step(move: Coords): State = {
-        val newHead = head + move
-        val newTail = {
-            val diff = newHead - tail
-            if (tail.distance(newHead) <= 1) tail
-            else tail + Coords(diff.x.sign, diff.y.sign)
+
+def step(state: List[Coords], move: Coords): List[Coords] = {
+    val newHead = state.head + move
+    if (state.tail.isEmpty) newHead::Nil
+    else newHead::step(
+        state.tail,
+        {
+            val diff = newHead - state.tail.head
+            if (state.tail.head.distance(newHead) <= 1) Coords(0, 0)
+            else Coords(diff.x.sign, diff.y.sign)
         }
-        State(newHead, newTail)
-    }
+    )
 }
 
+
 object Main {
-    val origin = Coords(0, 0)
     def main(args: Array[String]) = {
-        println(s"The tail visited $problem1 positions.")
+        println(s"In part 1, the tail visited ${countPositions(2)} positions.")
+        println(s"In part 2, the tail visited ${countPositions(10)} positions.")
     }
-    def problem1 = {
+    def countPositions(knots: Int) = {
         Source
             .fromFile("input")
             .getLines
             .map(_.split(" "))
-            .flatMap{case Array(dir, repeat) => List.fill(repeat.toInt)(
-                dir match
-                    case "U" => Coords(0, 1)
-                    case "D" => Coords(0, -1)
-                    case "L" => Coords(-1, 0)
-                    case "R" => Coords(1, 0)
-            )}
-            .scanLeft(State(origin, origin))(_ step _)
-            .map(_.tail)
+            .flatMap{case Array(dir, repeat) => List.fill(repeat.toInt)(dir)}
+            .map{
+                case "U" => Coords(0, 1)
+                case "D" => Coords(0, -1)
+                case "L" => Coords(-1, 0)
+                case "R" => Coords(1, 0)
+            }
+            .scanLeft(List.fill(knots)(Coords(0, 0)))(step(_, _))
+            .map(_.last)
             .distinct
             .length
     }
