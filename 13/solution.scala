@@ -14,10 +14,10 @@ object Main {
             .mkString
             .split("\n\n")
             .map(_.split("\n").map(parse) match
-                case Array(left, right) => compare(left, right)
+                case Array(left, right) => compare(left, right) == 1
             )
             .zipWithIndex
-            .filter(_._1.getOrElse(false))
+            .filter(_._1)
             .map(_._2 + 1)
             .reduce(_ + _)
     }
@@ -31,7 +31,7 @@ object Main {
             .toList
             .map(parse)
             ++ markers)
-            .sortWith((l, r) => compare(l, r).getOrElse(false))
+            .sortWith((l, r) => compare(l, r) == 1)
 
         packets.zipWithIndex.filter(markers contains _._1).map(_._2 + 1).reduce(_ * _)
     }
@@ -51,24 +51,24 @@ object Main {
         stack.head
     }
 
-    def compare(left: Matchable, right: Matchable): Option[Boolean] = {
+    def compare(left: Matchable, right: Matchable): Int = {
         (left, right) match
             case (left: Int, right: Int) => {
-                if (left < right) Some(true)
-                else if (left > right) Some(false)
-                else None
+                if (left < right) 1
+                else if (left > right) -1
+                else 0
             }
-            case (left: Buffer[Matchable] @unchecked, right: Buffer[Matchable] @unchecked) => {
+            case (left: Buffer[Matchable @unchecked], right: Buffer[Matchable @unchecked]) => {
                 (left zip right)
                 .map((subl, subr) => compare(subl, subr))
-                .find(_.isDefined)
+                .find(_ != 0)
                 .getOrElse(
-                    if (left.length < right.length) Some(true)
-                    else if (left.length > right.length) Some(false)
-                    else None
+                    if (left.length < right.length) 1
+                    else if (left.length > right.length) -1
+                    else 0
                 )
             }
-            case (left: Buffer[Matchable] @unchecked, right: Int) => compare(left, Buffer(right))
-            case (left: Int, right: Buffer[Matchable] @unchecked) => compare(Buffer(left), right)
+            case (left: Buffer[Matchable @unchecked], right: Int) => compare(left, Buffer(right))
+            case (left: Int, right: Buffer[Matchable @unchecked]) => compare(Buffer(left), right)
     }
 }
