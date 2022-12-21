@@ -4,7 +4,7 @@ import scala.io.Source
 object Main {
     def main(args: Array[String]) = {
         val calories = Source
-                        .fromFile("dataset.txt")
+                        .fromFile("input")
                         .mkString
                         .split("\n\n")
                         .map(_
